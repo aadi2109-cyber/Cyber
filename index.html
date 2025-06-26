@@ -4,11 +4,82 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Cybersecurity Tracker</title>
-
-  <!-- JetBrains Mono font -->
+  <title>Cybersecurity Tracker Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
+    const firebaseConfig = {
+      apiKey: "AIzaSyD0wCrPfFGgGV1CNE0nQQAeRF4nXHEIpVw",
+      authDomain: "cybertracker-d34eb.firebaseapp.com",
+      projectId: "cybertracker-d34eb",
+      storageBucket: "cybertracker-d34eb.firebasestorage.app",
+      messagingSenderId: "255600097760",
+      appId: "1:255600097760:web:b41d099a7d5927d15fd385"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth();
+    let userId = null;
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        userId = user.uid;
+        document.getElementById("user-info").textContent = `Signed in as: ${user.email || 'Anonymous'}`;
+        await loadProgress();
+        setAutosave();
+      }
+    });
+
+    async function signInWithGoogle() {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+    }
+
+    async function signInWithEmail(email, password) {
+      await signInWithEmailAndPassword(auth, email, password);
+    }
+
+    async function loadProgress() {
+      const docRef = doc(db, "users", userId);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        Object.entries(data.checkboxes || {}).forEach(([id, checked]) => {
+          const el = document.getElementById(id);
+          if (el) el.checked = checked;
+        });
+        if (data.notes !== undefined) {
+          document.getElementById("notes").value = data.notes;
+        }
+        document.querySelectorAll(".section").forEach(updateProgress);
+      }
+    }
+
+    async function saveProgress() {
+      if (!userId) return;
+      const checkboxes = document.querySelectorAll("input[type='checkbox']");
+      const checkboxData = {};
+      checkboxes.forEach(cb => checkboxData[cb.id] = cb.checked);
+      const notes = document.getElementById("notes").value;
+      await setDoc(doc(db, "users", userId), {
+        checkboxes: checkboxData,
+        notes
+      });
+    }
+
+    function setAutosave() {
+      document.querySelectorAll("input[type='checkbox']").forEach(cb => {
+        cb.addEventListener("change", () => saveProgress());
+      });
+      document.getElementById("notes").addEventListener("input", () => {
+        saveProgress();
+      });
+    }
+  </script>
   <style>
     body {
       font-family: 'JetBrains Mono', monospace;
@@ -20,6 +91,16 @@
     h1, h2 {
       color: #66fcf1;
       margin-bottom: 10px;
+    }
+    #dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #1e1e1e;
+      padding: 15px 25px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      border: 1px solid #333;
     }
     .section {
       background: #1e1e1e;
@@ -67,15 +148,29 @@
       margin-top: 10px;
       font-size: 14px;
     }
+    a {
+      color: #66fcf1;
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
 
-<h1>🛡️ Cybersecurity Progress Tracker</h1>
+<div id="dashboard-header">
+  <h1>🛡️ Cybersecurity Tracker Dashboard</h1>
+  <div id="user-info">Loading user...</div>
+</div>
+
 <div id="tracker"></div>
 
 <h2>📝 Personal Notes</h2>
 <textarea id="notes" placeholder="Write anything... tools, flags, goals..."></textarea>
+
+<h2>🌐 Learning Platforms</h2>
+<ul>
+  <li><a href="https://tryhackme.com/" target="_blank">TryHackMe</a></li>
+  <li><a href="https://hackthebox.com/" target="_blank">Hack The Box</a></li>
+</ul>
 
 <script>
   const topics = {
@@ -108,14 +203,17 @@
       "Nikto",
       "Metasploit",
       "John the Ripper",
-      "Hydra"
+      "Hydra",
+      "Netcat",
+      "Tcpdump"
     ],
     "Privilege Escalation": [
       "SUID/SGID Binaries",
       "Kernel Exploits",
       "Misconfigured Services",
       "PATH Hijacking",
-      "GTFOBins"
+      "GTFOBins",
+      "Password Cracking"
     ],
     "Capture The Flag": [
       "TryHackMe",
@@ -123,6 +221,20 @@
       "picoCTF",
       "OverTheWire",
       "CTFtime Participation"
+    ],
+    "Post-Exploitation": [
+      "Maintaining Access",
+      "Covering Tracks",
+      "Lateral Movement",
+      "Data Exfiltration",
+      "Tunneling & Pivoting"
+    ],
+    "Blue Team Basics": [
+      "SIEM Tools",
+      "Log Analysis",
+      "Incident Response",
+      "Forensics Basics",
+      "Threat Intelligence"
     ]
   };
 
@@ -149,9 +261,7 @@
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox";
       checkbox.id = id;
-      checkbox.checked = localStorage.getItem(id) === "true";
       checkbox.addEventListener("change", () => {
-        localStorage.setItem(id, checkbox.checked);
         updateProgress(section);
       });
 
@@ -165,13 +275,6 @@
     });
 
     trackerDiv.appendChild(section);
-    updateProgress(section);
-  });
-
-  const notes = document.getElementById("notes");
-  notes.value = localStorage.getItem("notes") || "";
-  notes.addEventListener("input", () => {
-    localStorage.setItem("notes", notes.value);
   });
 
   function updateProgress(section) {
@@ -183,4 +286,3 @@
 
 </body>
 </html>
-
