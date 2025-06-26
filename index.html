@@ -1,83 +1,26 @@
-<!-- save as cybersec_tracker.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Cybersecurity Tracker Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'JetBrains Mono', monospace;
-      background: #121212;
-      color: #d3d3d3;
-      padding: 30px;
-      line-height: 1.6;
-    }
-    h1, h2 {
-      color: #66fcf1;
-      margin-bottom: 10px;
-    }
-    #dashboard-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #1e1e1e;
-      padding: 15px 25px;
-      border-radius: 10px;
-      margin-bottom: 30px;
-      border: 1px solid #333;
-    }
-    .section {
-      background: #1e1e1e;
-      border: 1px solid #2c2c2c;
-      padding: 20px;
-      margin-bottom: 30px;
-      border-radius: 10px;
-    }
-    .topic {
-      margin: 5px 0;
-    }
-    label {
-      cursor: pointer;
-    }
-    input[type="checkbox"] {
-      accent-color: #66fcf1;
-      transform: scale(1.2);
-      margin-right: 10px;
-    }
-    progress {
-      width: 100%;
-      height: 18px;
-      border-radius: 5px;
-      background: #2c2c2c;
-    }
-    textarea {
-      width: 100%;
-      padding: 12px;
-      background: #1a1a1a;
-      color: #ddd;
-      border: 1px solid #444;
-      border-radius: 10px;
-      resize: vertical;
-      margin-top: 10px;
-      font-size: 14px;
-    }
-    a {
-      color: #66fcf1;
-      text-decoration: underline;
-    }
-    #login-box .switch {
-      text-align: center;
-      margin-top: 10px;
-      font-size: 14px;
-    }
-    #login-box .switch a {
-      color: #66fcf1;
-      cursor: pointer;
-      text-decoration: underline;
-    }
-  </style>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Cybersecurity Tracker Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+  body { font-family:'JetBrains Mono', monospace; background:#121212; color:#d3d3d3; padding:30px; }
+  h1,h2,h3 { color:#66fcf1; }
+  #dashboard-header { display:flex; justify-content:space-between; align-items:center; background:#1e1e1e; padding:15px 25px; border-radius:10px; margin-bottom:30px; }
+  #logout-button{background:#ff4444;color:#fff;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;}
+  .section{background:#1e1e1e;padding:20px;border-radius:10px;margin-bottom:30px;}
+  .subsection{margin-top:10px;padding-left:15px;}
+  label{cursor:pointer;}
+  input[type=checkbox]{accent-color:#66fcf1;margin-right:8px;transform:scale(1.2);}
+  textarea{width:100%;padding:12px;background:#1a1a1a;color:#ddd;border:1px solid #444;border-radius:10px;margin-top:10px;font-size:14px;}
+  a{color:#66fcf1;text-decoration:underline;}
+  progress{width:100%;height:18px;border-radius:5px;background:#2c2c2c;}
+  #login-popup{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:1000;}
+  #login-box{background:#1f1f1f;padding:30px;border-radius:12px;display:flex;flex-direction:column;gap:12px;width:300px;}
+  #login-box input{background:#2c2c2c;color:#fff;border:none;padding:10px;border-radius:6px;}
+  #login-box button{background:#66fcf1;color:#000;border:none;padding:10px;border-radius:6px;cursor:pointer;}
+  .switch{font-size:14px;text-align:center;} .switch a{color:#66fcf1;cursor:pointer;text-decoration:underline;}
+</style>
 </head>
 <body>
 
@@ -86,180 +29,114 @@
     <h2 id="login-title">Login to Continue</h2>
     <input type="email" id="login-email" placeholder="Email">
     <input type="password" id="login-password" placeholder="Password">
-    <button id="login-button" onclick="loginWithEmail()">Login with Email</button>
+    <button id="login-button" onclick="loginWithEmail()">Login</button>
     <button onclick="loginWithGoogle()">Login with Google</button>
-    <div class="switch">
-      <span id="switch-mode">Don't have an account? <a onclick="toggleMode()">Create one</a></span>
-    </div>
+    <div class="switch"><span id="switch-mode">Don't have an account? <a onclick="toggleMode()">Create one</a></span></div>
   </div>
 </div>
 
 <div id="dashboard-header">
-  <h1>🛡️ Cybersecurity Tracker Dashboard</h1>
-  <div id="user-info">Loading user...</div>
+  <h1>🛡️ Cybersecurity Tracker</h1>
+  <div><span id="user-info">Loading...</span><button id="logout-button" onclick="logout()">Logout</button></div>
 </div>
 
 <div id="tracker"></div>
 
 <h2>📝 Personal Notes</h2>
-<textarea id="notes" placeholder="Write anything... tools, flags, goals..."></textarea>
+<textarea id="notes" placeholder="Write anything..."></textarea>
 
 <h2>🌐 Learning Platforms</h2>
-<ul>
-  <li><a href="https://tryhackme.com/" target="_blank">TryHackMe</a></li>
-  <li><a href="https://hackthebox.com/" target="_blank">Hack The Box</a></li>
-</ul>
+<ul><li><a href="https://tryhackme.com" target="_blank">TryHackMe</a></li><li><a href="https://hackthebox.com" target="_blank">Hack The Box</a></li></ul>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-  import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyD0wCrPfFGgGV1CNE0nQQAeRF4nXHEIpVw",
-    authDomain: "cybertracker-d34eb.firebaseapp.com",
-    projectId: "cybertracker-d34eb",
-    storageBucket: "cybertracker-d34eb.firebasestorage.app",
-    messagingSenderId: "255600097760",
-    appId: "1:255600097760:web:b41d099a7d5927d15fd385"
-  };
+const firebaseConfig = { /* your config */ };
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth();
+let userId, isSignUp=false;
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const auth = getAuth();
-  let userId = null;
-  let isSignUp = false;
+const topics = {
+  "Linux & OS": { "Essentials":["Basic Commands","Filesystem","Permissions","Process Mgmt"], "Automation":["Cron","Shell Scripting","Systemd"] },
+  "Networking": { "Protocols":["TCP/IP","UDP","ICMP","DNS","HTTP"], "Tools":["ping","nmap","netcat","Wireshark"] },
+  "Web Security": { "Injection":["SQLi","XSS","HTML Injection"], "Auth":["Broken Auth","CSRF","JWT","OAuth"] },
+  "Binary Exploitation": { "Buffer Overflow": ["Basics","Exploit Dev","Shellcode"], "ROP": ["Gadgets","Bypassing DEP/ASLR"] },
+  "Active Directory": { "Enum":["LDAP","PowerView","BloodHound"], "Attacks":["Kerberoasting","Golden Tickets","DCSync"] },
+  "Post-Exploitation": { "Persistence":["Scheduled Tasks","Startup Scripts"], "Privilege Esc":["SUID","Kernel Exploits","Misconfigs"] },
+  "Blue Teaming": { "Detection":["SIEM","Sysmon","Log Parsing"], "Response":["IR Playbooks","Containment"] },
+  "CTF Platforms": { "Beginner":["TryHackMe","HTB"], "Intermediate":["picoCTF","OverTheWire"] }
+};
 
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      userId = user.uid;
-      document.getElementById("login-popup").style.display = "none";
-      document.getElementById("user-info").textContent = `Signed in as: ${user.email || 'Anonymous'}`;
-      generateTracker();
-      await loadProgress();
-      setAutosave();
-    } else {
-      document.getElementById("login-popup").style.display = "flex";
+onAuthStateChanged(auth, async user=>{
+  if(user){ userId=user.uid; document.getElementById("login-popup").style.display="none";
+    document.getElementById("user-info").textContent=`Signed in as: ${user.email}`;
+    generateTracker(); await loadProgress(); setupAutosave();
+  } else document.getElementById("login-popup").style.display="flex";
+});
+
+window.toggleMode = ()=>{ isSignUp=!isSignUp; document.getElementById("login-title").innerText=isSignUp?"Create Account":"Login"; document.getElementById("login-button").innerText=isSignUp?"Create":"Login"; document.getElementById("switch-mode").innerHTML=isSignUp?'Have an account? <a onclick="toggleMode()">Login</a>':'No account? <a onclick="toggleMode()">Sign up</a>'; };
+
+window.loginWithEmail = async ()=>{
+  const e=document.getElementById("login-email").value, p=document.getElementById("login-password").value;
+  try{ if(isSignUp) await createUserWithEmailAndPassword(auth,e,p); else await signInWithEmailAndPassword(auth,e,p); }
+  catch(err){ alert("Auth error: "+err.message); }
+};
+window.loginWithGoogle = async ()=> await signInWithPopup(auth,new GoogleAuthProvider());
+window.logout = async ()=>{ await signOut(auth); location.reload(); };
+
+function generateTracker(){
+  const tr=document.getElementById("tracker"); tr.innerHTML="";
+  for(const c in topics){
+    const sec=document.createElement("div"); sec.className="section";
+    const h2=document.createElement("h2"); h2.textContent=c; sec.appendChild(h2);
+    for(const sub in topics[c]){
+      const subsec=document.createElement("div"); subsec.className="subsection";
+      const h3=document.createElement("h3"); h3.textContent=sub; subsec.appendChild(h3);
+      topics[c][sub].forEach((t,i)=>{
+        const id=`${c}-${sub}-${i}`.replace(/\s+/g,'-');
+        const div=document.createElement("div"); div.className="topic";
+        const cb=document.createElement("input"); cb.type="checkbox"; cb.id=id;
+        const lbl=document.createElement("label"); lbl.htmlFor=id; lbl.textContent=t;
+        div.append(cb,lbl); subsec.append(div);
+      });
+      sec.append(subsec);
     }
+    const prog=document.createElement("progress"); sec.append(prog);
+    tr.append(sec);
+  }
+}
+
+async function loadProgress(){
+  const snap=await getDoc(doc(db,"users",userId));
+  if(snap.exists()){
+    const d=snap.data();
+    for(const [id,v] of Object.entries(d.checkboxes||{})){ const el=document.getElementById(id); if(el) el.checked=v; }
+    document.getElementById("notes").value=d.notes||"";
+  }
+  updateProgressBars();
+}
+
+function setupAutosave(){
+  document.querySelectorAll("input[type=checkbox]").forEach(cb=>cb.addEventListener("change",()=>{updateProgressBars(); saveProgress();}));
+  document.getElementById("notes").addEventListener("input",saveProgress);
+}
+
+function updateProgressBars(){
+  document.querySelectorAll(".section").forEach(sec=>{
+    const total=sec.querySelectorAll("input[type=checkbox]").length;
+    const done=sec.querySelectorAll("input[type=checkbox]:checked").length;
+    const prog=sec.querySelector("progress"); if(prog){ prog.max=total; prog.value=done; }
   });
+}
 
-  window.loginWithEmail = async () => {
-    const email = document.getElementById("login-email").value;
-    const password = document.getElementById("login-password").value;
-    try {
-      if (isSignUp) {
-        await createUserWithEmailAndPassword(auth, email, password);
-      } else {
-        await signInWithEmailAndPassword(auth, email, password);
-      }
-    } catch (err) {
-      alert("Auth failed: " + err.message);
-    }
-  };
-
-  window.loginWithGoogle = async () => {
-    const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
-  };
-
-  window.toggleMode = () => {
-    isSignUp = !isSignUp;
-    document.getElementById("login-title").textContent = isSignUp ? "Create Account" : "Login to Continue";
-    document.getElementById("login-button").textContent = isSignUp ? "Create Account" : "Login with Email";
-    document.getElementById("switch-mode").innerHTML = isSignUp ? 'Already have an account? <a onclick="toggleMode()">Login</a>' : 'Don\'t have an account? <a onclick="toggleMode()">Create one</a>';
-  };
-
-  const topics = {
-    "Linux & OS Basics": ["Linux Commands", "File Permissions", "Cron Jobs", "Processes", "File System Structure"],
-    "Networking": ["OSI Model", "TCP/IP", "nmap", "Netcat", "Wireshark", "ARP/DNS/DHCP"],
-    "Web Security": ["XSS", "SQL Injection", "CSRF", "Command Injection", "IDOR", "Broken Auth"],
-    "Tools": ["Burp Suite", "Gobuster", "Nikto", "Hydra", "John the Ripper", "Metasploit"],
-    "Post-Exploitation": ["Maintaining Access", "Covering Tracks", "Privilege Escalation", "Data Exfiltration"],
-    "Blue Teaming": ["SIEM", "Log Analysis", "Incident Response", "Threat Hunting"],
-    "CTF Platforms": ["TryHackMe", "HackTheBox", "picoCTF", "OverTheWire"]
-  };
-
-  function generateTracker() {
-    const tracker = document.getElementById("tracker");
-    tracker.innerHTML = "";
-
-    for (const category in topics) {
-      const section = document.createElement("div");
-      section.className = "section";
-
-      const title = document.createElement("h2");
-      title.textContent = category;
-      section.appendChild(title);
-
-      const progress = document.createElement("progress");
-      progress.max = topics[category].length;
-      progress.value = 0;
-      section.appendChild(progress);
-
-      topics[category].forEach((topic, i) => {
-        const id = `${category}-${i}`;
-        const div = document.createElement("div");
-        div.className = "topic";
-
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.id = id;
-
-        const label = document.createElement("label");
-        label.htmlFor = id;
-        label.textContent = topic;
-
-        div.appendChild(checkbox);
-        div.appendChild(label);
-        section.appendChild(div);
-      });
-
-      tracker.appendChild(section);
-    }
-  }
-
-  async function loadProgress() {
-    const docRef = doc(db, "users", userId);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-      Object.entries(data.checkboxes || {}).forEach(([id, checked]) => {
-        const el = document.getElementById(id);
-        if (el) el.checked = checked;
-      });
-      document.getElementById("notes").value = data.notes || "";
-    }
-    updateAllProgress();
-  }
-
-  function updateAllProgress() {
-    document.querySelectorAll(".section").forEach(section => {
-      const checkboxes = section.querySelectorAll("input[type='checkbox']");
-      const progress = section.querySelector("progress");
-      progress.value = Array.from(checkboxes).filter(cb => cb.checked).length;
-    });
-  }
-
-  function setAutosave() {
-    document.querySelectorAll("input[type='checkbox']").forEach(cb => {
-      cb.addEventListener("change", () => {
-        updateAllProgress();
-        saveProgress();
-      });
-    });
-    document.getElementById("notes").addEventListener("input", saveProgress);
-  }
-
-  async function saveProgress() {
-    if (!userId) return;
-    const checkboxes = {};
-    document.querySelectorAll("input[type='checkbox']").forEach(cb => {
-      checkboxes[cb.id] = cb.checked;
-    });
-    const notes = document.getElementById("notes").value;
-    await setDoc(doc(db, "users", userId), { checkboxes, notes });
-  }
+async function saveProgress(){
+  const data={checkboxes:{},notes:document.getElementById("notes").value};
+  document.querySelectorAll("input[type=checkbox]").forEach(cb=>data.checkboxes[cb.id]=cb.checked);
+  await setDoc(doc(db,"users",userId),data);
+}
 </script>
-
 </body>
 </html>
