@@ -53,7 +53,15 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-const firebaseConfig = { /* your config */ };
+const firebaseConfig = {
+  apiKey: "...",
+  authDomain: "cybertracker-d34eb.firebaseapp.com",
+  projectId: "cybertracker-d34eb", // ✅ <-- This line was missing or incorrect
+  storageBucket: "cybertracker-d34eb.appspot.com", // ✅ corrected domain
+  messagingSenderId: "255600097760",
+  appId: "1:255600097760:web:b41d099a7d5927d15fd385"
+};
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth();
